@@ -35,13 +35,6 @@ public class SocialProfileHelper extends BaseModelHelper<SocialProfile, Long> im
     }
 
     @Override
-    public SocialProfile softDelete(Long socialProfileId) {
-        TypedQuery<SocialProfile> query = jpaApi.em().createNamedQuery("sp_soft_delete", SocialProfile.class)
-                .setParameter("softDeleted", false)  ;
-        return query.getSingleResult() ;
-    }
-
-    @Override
     public SocialProfile getByNetworkAndNetworkId(String socialNetwork, String socialNetworkId) {
         TypedQuery<SocialProfile> socialProfileTypedQuery = jpaApi.em().createNamedQuery("sp_get_by_network_and_network_id", SocialProfile.class)
                                                                         .setParameter("socialNetwork", socialNetwork)

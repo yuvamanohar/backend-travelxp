@@ -15,5 +15,6 @@ libraryDependencies ++= Seq(
 )
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.36"
 libraryDependencies += evolutions
+libraryDependencies += "org.apache.directory.studio" % "org.apache.commons.io" % "2.4"
 
 PlayKeys.externalizeResources := false

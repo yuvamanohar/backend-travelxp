@@ -54,7 +54,7 @@ public class UserController extends BaseController {
         String updatedAt = createdAt ;
 
         User user = Json.fromJson(request().body().asJson(), User.class) ;
-        SocialProfile sp = user.socialProfile ;
+        SocialProfile sp = user.getSocialProfile() ;
 
         CompletionStage<SocialProfile> existingSocialProfile =
                 iSocialProfile.getByNetworkAndNetworkIdAsync(sp.socialNetwork, sp.socialNetworkId) ;
@@ -71,10 +71,10 @@ public class UserController extends BaseController {
 //                                    ok(Json.toJson(new UserData(j, BaseController.OLD_USER_NEW_DEVICE))), ec.current()) ;
 //                    }
             } else {
-                User newUser = new User(user.mobile, user.email, user.platform, user.deviceId, createdAt, updatedAt, false) ;
+                User newUser = new User(user.mobile, user.email, user.platform, user.deviceId, false) ;
                 SocialProfile socialProfile = new SocialProfile(sp.socialNetwork, sp.socialNetworkId,
                                                         sp.firstName, sp.middleName, sp.lastName,
-                                                        sp.completeName, sp.profilePic, createdAt, updatedAt, false) ;
+                                                        sp.completeName, sp.profilePic, false) ;
                 newUser.addSocialProfile(socialProfile);
 
                 CompletionStage<SocialProfile> newSocialProfile = iUser.addUserAndSocialProfileAsync(newUser, socialProfile, iSocialProfile) ;

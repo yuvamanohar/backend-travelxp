@@ -24,40 +24,32 @@ import java.sql.Date;
 @Entity
 @Table(name="users")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="userId")
-public class User {
+public class User extends BaseModel {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     public Long userId ;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    public SocialProfile socialProfile ;
+    private SocialProfile socialProfile ;
 
     public Long mobile ;
     public String email ;
     public String platform  ;
     public String deviceId ;
 
-    public String createdAt ;
-    public String updatedAt ;
-
-    @JsonIgnore
-    public Boolean softDeleted ;
-
     public User() {} ;
 
     public User(Long mobile, String email, String platform,
-                String deviceId, String createdAt, String updatedAt, Boolean softDeleted) {
+                String deviceId, Boolean softDeleted) {
         this.mobile = mobile ;
         this.email = email ;
         this.platform = platform ;
         this.deviceId = deviceId ;
-        this.createdAt = createdAt ;
-        this.updatedAt = updatedAt ;
         this.softDeleted = softDeleted ;
     }
 
-    private SocialProfile getSocialProfile() {
+    public SocialProfile getSocialProfile() {
         return socialProfile ;
     }
 

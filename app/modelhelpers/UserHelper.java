@@ -37,13 +37,6 @@ public class UserHelper extends BaseModelHelper<User, Long> implements IUser {
     }
 
     @Override
-    public User softDelete(Long socialProfileId) {
-        TypedQuery<User> query = jpaApi.em().createNamedQuery("user_soft_delete", User.class)
-                .setParameter("softDeleted", true)  ;
-        return query.getSingleResult() ;
-    }
-
-    @Override
     public User updatePlatformandDeviceId(Long userId, String platform, String deviceId) {
         TypedQuery<User> typedQuery = jpaApi.em().createNamedQuery("user_update_platform_and_device_id", User.class) ;
         return typedQuery.getSingleResult() ;

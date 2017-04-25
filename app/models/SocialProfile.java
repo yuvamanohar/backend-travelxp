@@ -26,7 +26,7 @@ import javax.persistence.*;
 @Entity
 @Table(name="socialProfiles")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="socialProfileId")
-public class SocialProfile {
+public class SocialProfile extends BaseModel {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class SocialProfile {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userId")
     @JsonIgnore
-    public User user ;
+    private User user ;
 
     public String socialNetwork ;
     public String socialNetworkId ;
@@ -44,11 +44,6 @@ public class SocialProfile {
     public String lastName ;
     public String completeName ;
     public String profilePic ;
-    public String createdAt ;
-    public String updatedAt ;
-
-    @JsonIgnore
-    public Boolean softDeleted ;
 
     public User getUser() {
         return user ;
@@ -62,7 +57,7 @@ public class SocialProfile {
 
     public SocialProfile(String socialNetwork, String socialNetworkId,
                          String firstName, String middleName, String lastName, String completeName,
-                         String profilePic, String createdAt, String updatedAt, boolean softDeleted) {
+                         String profilePic, boolean softDeleted) {
         this.socialNetwork = socialNetwork ;
         this.socialNetworkId = socialNetworkId ;
         this.firstName = firstName ;
@@ -70,8 +65,6 @@ public class SocialProfile {
         this.lastName = lastName ;
         this.completeName = completeName ;
         this.profilePic = profilePic ;
-        this.createdAt = createdAt ;
-        this.updatedAt = updatedAt ;
         this.softDeleted = softDeleted ;
     }
 }

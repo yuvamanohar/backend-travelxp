@@ -15,3 +15,6 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 # User controller actions
 POST    /v1/bootstrap                                          controllers.UserController.bootstrap()
 POST    /v1/deleteUser/:userId                                 controllers.UserController.deleteUser(userId: Long)
+
+#Post
+PUT    /v1/user/:userId/postContent                           controllers.PostController.postContent(userId: Long)

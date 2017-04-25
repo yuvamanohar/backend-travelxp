@@ -1,11 +1,14 @@
 package modelhelpers;
 
+import models.BaseModel;
+import models.Post;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
 
 import javax.inject.Inject;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
@@ -15,7 +18,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
 /**
  * Created by yuva on 18/4/17.
  */
-public abstract class BaseModelHelper<T, K> {
+public abstract class BaseModelHelper<T extends BaseModel, K> {
 
     protected final JPAApi jpaApi;
     protected final DatabaseExecutionContext executionContext;
@@ -50,10 +53,14 @@ public abstract class BaseModelHelper<T, K> {
         return  supplyAsync(() -> wrapInTransaction(em -> get(primaryKey)), executionContext) ;
     }
 
-    public abstract T softDelete(K socialProfileId) ;
+    public T softDelete(T model) {
+        model.setSoftDeleted();
+        jpaApi.em().merge(model) ;
+        return model ;
+    }
 
-    public CompletionStage<T> softDeleteAsync(K primaryKey) {
-        return supplyAsync(() -> wrapInTransaction(em -> softDelete(primaryKey)), executionContext) ;
+    public CompletionStage<T> softDeleteAsync(T model) {
+        return supplyAsync(() -> wrapInTransaction(em -> softDelete(model)), executionContext) ;
     }
 
     protected <T> T wrapInTransaction(Function<EntityManager, T> function) {
