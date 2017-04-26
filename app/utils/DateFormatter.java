@@ -16,4 +16,5 @@ public class DateFormatter {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss") ;
         return formatter.format(now) ;
     }
+
 }

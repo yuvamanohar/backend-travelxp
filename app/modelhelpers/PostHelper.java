@@ -2,11 +2,15 @@ package modelhelpers;
 
 import com.google.inject.Inject;
 import models.Post;
+import models.PostDetail;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import java.util.List;
+import java.util.concurrent.CompletionStage;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
  * Created by yuva on 20/4/17.
@@ -28,5 +32,17 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
         } catch (NoResultException e) {
             return  null ;
         }
+    }
+
+    @Override
+    public Post insertPostAndPostDetails(Post post) {
+        post = this.insert(post) ;
+//        post.postDetails.forEach(i -> jpaApi.em().persist(i));
+        return post ;
+    }
+
+    @Override
+    public CompletionStage<Post> insertPostAndPostDetailsAsync(Post post) {
+        return supplyAsync(() -> wrapInTransaction(em -> insertPostAndPostDetails(post)), executionContext);
     }
 }

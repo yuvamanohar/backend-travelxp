@@ -48,13 +48,13 @@ public class UserHelper extends BaseModelHelper<User, Long> implements IUser {
     }
 
     @Override
-    public SocialProfile addUserAndSocialProfile(User user, SocialProfile socialProfile, ISocialProfile iSocialProfile) {
+    public User addUserAndSocialProfile(User user, SocialProfile socialProfile, ISocialProfile iSocialProfile) {
         this.insert(user) ;
-        return iSocialProfile.insert(socialProfile) ;
+        return user ;
     }
 
     @Override
-    public CompletionStage<SocialProfile> addUserAndSocialProfileAsync(User user, SocialProfile socialProfile, ISocialProfile iSocialProfile) {
+    public CompletionStage<User> addUserAndSocialProfileAsync(User user, SocialProfile socialProfile, ISocialProfile iSocialProfile) {
         return supplyAsync(() -> wrapInTransaction(entityManager -> addUserAndSocialProfile(user, socialProfile, iSocialProfile)), executionContext);
     }
 }

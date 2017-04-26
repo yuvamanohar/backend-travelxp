@@ -24,7 +24,7 @@ create table `socialProfiles`(
   `createdAt` DATETIME NOT NULL,
   `updatedAt` DATETIME NOT NULL,
   `softDeleted` tinyint(1) default 0,
-  INDEX `idx_social_network_and_id` (`socialNetwork`, `socialNetworkId`),
+  CONSTRAINT `idx_social_network_and_id` UNIQUE (`socialNetwork`, `socialNetworkId`),
   INDEX `idx_social_profile_id_soft_deleted` (`socialProfileId`, `softDeleted`),
   INDEX `idx_social_first_name` (`firstName`),
   INDEX `idx_social_last_name` (`lastName`),
@@ -35,8 +35,6 @@ create table `socialProfiles`(
 create table `posts`(
   `postId` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `userId` BIGINT,
-  `media` TEXT NOT NULL,
-  `mediaType` ENUM('GIF', 'PHOTO', 'VIDEO') DEFAULT NULL,
   `scribble` TEXT DEFAULT NULL,
   `latitude` DOUBLE DEFAULT NULL,
   `longitude` DOUBLE DEFAULT NULL,
@@ -52,8 +50,20 @@ create table `posts`(
   CONSTRAINT fk_post_user FOREIGN KEY (`userId`) REFERENCES users(`userId`)
 ) ENGINE=InnoDB;
 
+create table `postDetails`(
+  `postDetailId` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `postId` BIGINT,
+  `media` TEXT NOT NULL,
+  `mediaType` ENUM('GIF', 'PHOTO', 'VIDEO') NOT NULL,
+  `createdAt` DATETIME NOT NULL,
+  `updatedAt` DATETIME NOT NULL,
+  `softDeleted` tinyint(1) default 0,
+  INDEX `idx_post_soft_deleted` (`postDetailId`, `softDeleted`),
+  CONSTRAINT fk_post_detail_post FOREIGN KEY (`postId`) REFERENCES posts(`postId`)
+) ENGINE=InnoDB;
 
 # --- !Downs
+drop table `postDetails` ;
 drop table `posts` ;
 drop table `socialProfiles` ;
 drop table `users` ;

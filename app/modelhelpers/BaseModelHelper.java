@@ -1,15 +1,11 @@
 package modelhelpers;
 
 import models.BaseModel;
-import models.Post;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
 
 import javax.inject.Inject;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.TypedQuery;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 

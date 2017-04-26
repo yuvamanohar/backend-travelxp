@@ -17,10 +17,7 @@ import javax.persistence.*;
                 query = "select sp from SocialProfile sp where sp.socialNetwork = :socialNetwork and sp.socialNetworkId = :socialNetworkId and softDeleted = :softDeleted"),
         @NamedQuery(
                 name = "sp_get_by_id",
-                query = "select sp from SocialProfile sp where sp.socialProfileId = :socialProfileId and softDeleted = :softDeleted"),
-        @NamedQuery(
-                name = "sp_soft_delete",
-                query = "update SocialProfile sp set sp.softDeleted = :softDeleted where sp.socialProfileId = :socialProfileId")
+                query = "select sp from SocialProfile sp where sp.socialProfileId = :socialProfileId and softDeleted = :softDeleted")
 })
 
 @Entity

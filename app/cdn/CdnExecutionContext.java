@@ -8,7 +8,7 @@ import javax.inject.Inject;
 
 /**
  * Created by yuva on 17/4/17.
- * Custom execution context wired to "database.dispatcher" thread pool
+ * Custom execution context wired to "cdn.dispatcher" thread pool
  */
 public class CdnExecutionContext implements ExecutionContextExecutor {
     private final ExecutionContext executionContext;

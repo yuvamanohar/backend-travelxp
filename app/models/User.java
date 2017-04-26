@@ -15,9 +15,6 @@ import java.sql.Date;
                 name = "user_get_by_id",
                 query = "select u from User u where u.userId = :userId and softDeleted = :softDeleted"),
         @NamedQuery(
-                name = "user_soft_delete",
-                query = "update User u set u.softDeleted = :softDeleted where u.userId = :userId"),
-        @NamedQuery(
                 name = "user_update_platform_and_device_id",
                 query = "update User u set u.platform = :platform, u.deviceId = :deviceId  where u.userId = :userId")
 })

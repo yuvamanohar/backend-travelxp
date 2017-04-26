@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Executor;
 
 /**
  * Created by yuva on 17/4/17.
@@ -24,13 +25,13 @@ public class UserController extends BaseController {
 
     private final IUser iUser ;
     private final ISocialProfile iSocialProfile ;
-    private final HttpExecutionContext ec;
+    private final Executor ec;
 
     @Inject
     public UserController(IUser user, ISocialProfile socialProfile, HttpExecutionContext ec) {
         this.iUser = user;
         this.iSocialProfile = socialProfile ;
-        this.ec = ec;
+        this.ec = ec.current() ;
     }
 
     @Transactional
@@ -64,7 +65,7 @@ public class UserController extends BaseController {
                 User dbUser = dbSocialProfile.getUser() ;
           //          if(dbUser.platform.equals(user.platform) && dbUser.deviceId.equals(user.deviceId)) {
                         return CompletableFuture.supplyAsync(()
-                                -> ok(Json.toJson(new UserData(dbUser, BaseController.OLD_USER_OLD_DEVICE))), ec.current()) ;
+                                -> ok(Json.toJson(new UserData(dbUser, BaseController.OLD_USER_OLD_DEVICE)))) ;
 //                    } else {
 //                        CompletionStage<User> updatedUser = getUpdatedUser(dbUser, user.platform, user.deviceId) ;
 //                        return updatedUser.thenApplyAsync(j ->
@@ -77,11 +78,8 @@ public class UserController extends BaseController {
                                                         sp.completeName, sp.profilePic, false) ;
                 newUser.addSocialProfile(socialProfile);
 
-                CompletionStage<SocialProfile> newSocialProfile = iUser.addUserAndSocialProfileAsync(newUser, socialProfile, iSocialProfile) ;
-                return newSocialProfile.thenComposeAsync(i -> {
-                            CompletionStage<User> k = iUser.getAsync(i.getUser().userId) ;
-                            return  k.thenApplyAsync( u -> ok(Json.toJson(new UserData(u, BaseController.NEW_USER)))) ;
-                        }) ;
+                CompletionStage<User> userCompletionStage = iUser.addUserAndSocialProfileAsync(newUser, socialProfile, iSocialProfile) ;
+                return userCompletionStage.thenApplyAsync(u -> ok(Json.toJson(new UserData(u, BaseController.NEW_USER)))) ;
             }
         }) ;
     }

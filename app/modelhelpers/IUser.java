@@ -24,8 +24,8 @@ public interface IUser {
     public User updatePlatformandDeviceId(Long userId, String platform, String deviceId) ;
     public CompletionStage<User> updatePlatformandDeviceIdAsync(Long userId, String platform, String deviceId) ;
 
-    public SocialProfile addUserAndSocialProfile(User user, SocialProfile socialProfile, ISocialProfile iSocialProfile) ;
-    public CompletionStage<SocialProfile> addUserAndSocialProfileAsync(User user, SocialProfile socialProfile, ISocialProfile iSocialProfile) ;
+    public User addUserAndSocialProfile(User user, SocialProfile socialProfile, ISocialProfile iSocialProfile) ;
+    public CompletionStage<User> addUserAndSocialProfileAsync(User user, SocialProfile socialProfile, ISocialProfile iSocialProfile) ;
 
     public User get(Long userId) ;
     public CompletionStage<User> getAsync(Long userId) ;

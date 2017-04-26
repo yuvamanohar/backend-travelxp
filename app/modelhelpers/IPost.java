@@ -2,7 +2,9 @@ package modelhelpers;
 
 import com.google.inject.ImplementedBy;
 import models.Post;
+import models.PostDetail;
 
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 /**
@@ -10,5 +12,6 @@ import java.util.concurrent.CompletionStage;
  */
 @ImplementedBy(PostHelper.class)
 public interface IPost {
-    public CompletionStage<Post> insertAsync(Post post) ;
+    public Post insertPostAndPostDetails(Post post) ;
+    public CompletionStage<Post> insertPostAndPostDetailsAsync(Post post) ;
 }
