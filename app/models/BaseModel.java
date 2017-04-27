@@ -13,7 +13,10 @@ import javax.persistence.PreUpdate;
  */
 @MappedSuperclass
 public abstract class BaseModel {
+
+    @JsonIgnore
     public String createdAt ;
+
     public String updatedAt ;
 
     @JsonIgnore

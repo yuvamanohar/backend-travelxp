@@ -14,7 +14,16 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(
                 name = "post_get_by_id",
-                query = "select p from Post p where p.postId = :postId and softDeleted = :softDeleted")
+                query = "select p from Post p where p.postId = :postId and softDeleted = :softDeleted"),
+        @NamedQuery(
+                name = "get_posts_at_time",
+                query = "select p from Post p where p.updatedAt = :leastRecentPostTime and softDeleted = :softDeleted"),
+        @NamedQuery(
+                name = "get_older_posts",
+                query = "select p from Post p where p.updatedAt < :leastRecentPostTime and softDeleted = :softDeleted order by p.updatedAt desc"),
+        @NamedQuery(
+                name = "get_newer_posts",
+                query = "select p from Post p where p.updatedAt >= :mostRecentPostTime and softDeleted = :softDeleted order by p.updatedAt desc")
 })
 
 @Entity
@@ -31,12 +40,13 @@ public class Post extends BaseModel {
             foreignKey = @ForeignKey(name = "fk_post_user"))
     private User user ;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     public List<PostDetail> postDetails ;
 
     public String scribble ;
     public Double latitude ;
     public Double longitude ;
+    public String location ;
     public Integer likes ;
     public Integer comments ;
     public Integer shares ;

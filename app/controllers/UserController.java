@@ -36,8 +36,8 @@ public class UserController extends BaseController {
 
     @Transactional
     public CompletionStage<Result> bootstrap() {
-        Map<String, String> params = getAllParams(request()) ;
-/*
+/*        Map<String, String> params = getAllParams(request()) ;
+
         String mobile = params.get("mobile") ;
         Long mobileNumber = mobile != null ? Long.parseLong(mobile) : null ;
         String email = params.get("email") ;
@@ -51,9 +51,6 @@ public class UserController extends BaseController {
         String completeName = params.get("completeName") ;
         String profilePic = params.get("profilePic") ;
 */
-        String createdAt = DateFormatter.getReadableCurrentTime() ;
-        String updatedAt = createdAt ;
-
         User user = Json.fromJson(request().body().asJson(), User.class) ;
         SocialProfile sp = user.getSocialProfile() ;
 
@@ -65,7 +62,7 @@ public class UserController extends BaseController {
                 User dbUser = dbSocialProfile.getUser() ;
           //          if(dbUser.platform.equals(user.platform) && dbUser.deviceId.equals(user.deviceId)) {
                         return CompletableFuture.supplyAsync(()
-                                -> ok(Json.toJson(new UserData(dbUser, BaseController.OLD_USER_OLD_DEVICE)))) ;
+                                -> ok(Json.toJson(new UserData(dbUser, BaseController.OLD_USER_OLD_DEVICE, DateFormatter.getReadableCurrentTime())))) ;
 //                    } else {
 //                        CompletionStage<User> updatedUser = getUpdatedUser(dbUser, user.platform, user.deviceId) ;
 //                        return updatedUser.thenApplyAsync(j ->
@@ -78,8 +75,8 @@ public class UserController extends BaseController {
                                                         sp.completeName, sp.profilePic, false) ;
                 newUser.addSocialProfile(socialProfile);
 
-                CompletionStage<User> userCompletionStage = iUser.addUserAndSocialProfileAsync(newUser, socialProfile, iSocialProfile) ;
-                return userCompletionStage.thenApplyAsync(u -> ok(Json.toJson(new UserData(u, BaseController.NEW_USER)))) ;
+                CompletionStage<User> userCompletionStage = iUser.addUserAndSocialProfileAsync(newUser) ;
+                return userCompletionStage.thenApplyAsync(u -> ok(Json.toJson(new UserData(u, BaseController.NEW_USER, DateFormatter.getReadableCurrentTime())))) ;
             }
         }) ;
     }

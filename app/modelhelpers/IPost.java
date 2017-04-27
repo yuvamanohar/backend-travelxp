@@ -14,4 +14,7 @@ import java.util.concurrent.CompletionStage;
 public interface IPost {
     public Post insertPostAndPostDetails(Post post) ;
     public CompletionStage<Post> insertPostAndPostDetailsAsync(Post post) ;
+
+    public CompletionStage<List<Post>> getPostsOlderThanAsync(String leastRecentPostTime, int count) ;
+    public CompletionStage<List<Post>> getPostsNewerThanAsync(String mostRecentPostTime, int count) ;
 }

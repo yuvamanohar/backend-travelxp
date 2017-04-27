@@ -24,7 +24,6 @@ import java.util.concurrent.Executor;
  * Created by yuva on 20/4/17.
  */
 public class PostController extends BaseController {
-    public static final String PHOTO_KEY = "photo" ;
     public static final String DESC_KEY = "description" ;
 
     private final IUser iUser ;

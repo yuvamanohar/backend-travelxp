@@ -2,7 +2,6 @@ package modelhelpers;
 
 import com.google.inject.Inject;
 import models.Post;
-import models.PostDetail;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
 
@@ -26,7 +25,7 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
     public Post get(Long socialProfileId) {
         TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("post_get_by_id", Post.class)
                 .setParameter("postId", socialProfileId)
-                .setParameter("softDeleted", true) ;
+                .setParameter("softDeleted", false) ;
         try {
             return typedQuery.getSingleResult();
         } catch (NoResultException e) {
@@ -43,6 +42,51 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
 
     @Override
     public CompletionStage<Post> insertPostAndPostDetailsAsync(Post post) {
-        return supplyAsync(() -> wrapInTransaction(em -> insertPostAndPostDetails(post)), executionContext);
+        return supplyAsync(() -> wrapInTransaction(em -> insertPostAndPostDetails(post)), dbExecutionContext);
+    }
+
+    public List<Post> getPostsOlderThan(String leastRecentPostTime, int count) {
+        /* Get all posts having a particular time at one shot, this is to simplify code.
+           TODO - V10, may be this will need optimisation if the number of posts for a particular time
+            starts shooting based on all other conditions */
+        TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("get_posts_at_time", Post.class)
+                .setParameter("leastRecentPostTime", leastRecentPostTime)
+                .setParameter("softDeleted", false) ;
+
+        List<Post> allPosts = typedQuery.getResultList() ;
+
+        if(allPosts.size() < count) {
+            TypedQuery<Post> morePosts = jpaApi.em().createNamedQuery("get_older_posts", Post.class)
+                    .setParameter("leastRecentPostTime", leastRecentPostTime)
+                    .setParameter("softDeleted", false).setMaxResults(count) ;
+            List<Post> remainingPosts = morePosts.getResultList() ;
+            allPosts.addAll(remainingPosts) ;
+        }
+
+        return allPosts ;
+    }
+
+    @Override
+    public CompletionStage<List<Post>> getPostsOlderThanAsync(String leastRecentPostTime, int count) {
+        return supplyAsync(() -> wrapInTransaction(em -> getPostsOlderThan(leastRecentPostTime, count)), dbExecutionContext) ;
+    }
+
+    /**
+     * TODO - Add support for count in next versions, for now the expectation is there will be very less updates
+     * @param mostRecentPostTime
+     * @param count
+     * @return
+     */
+    public List<Post> getPostsNewerThan(String mostRecentPostTime, int count) {
+        TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("get_newer_posts", Post.class)
+                .setParameter("mostRecentPostTime", mostRecentPostTime)
+                .setParameter("softDeleted", false) ;
+
+        return typedQuery.getResultList() ;
+    }
+
+    @Override
+    public CompletionStage<List<Post>> getPostsNewerThanAsync(String mostRecentPostTime, int count) {
+        return supplyAsync(() -> wrapInTransaction(em -> getPostsNewerThan(mostRecentPostTime, count)), dbExecutionContext);
     }
 }

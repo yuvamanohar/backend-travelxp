@@ -1,13 +1,10 @@
 package modelhelpers;
 
 import com.google.inject.Inject;
-import models.SocialProfile;
 import models.User;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
 
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.concurrent.CompletionStage;
@@ -44,17 +41,17 @@ public class UserHelper extends BaseModelHelper<User, Long> implements IUser {
 
     @Override
     public CompletionStage<User> updatePlatformandDeviceIdAsync(Long userId, String platform, String deviceId) {
-        return supplyAsync(() -> wrapInTransaction(em -> updatePlatformandDeviceId(userId, platform, deviceId)), executionContext) ;
+        return supplyAsync(() -> wrapInTransaction(em -> updatePlatformandDeviceId(userId, platform, deviceId)), dbExecutionContext) ;
     }
 
     @Override
-    public User addUserAndSocialProfile(User user, SocialProfile socialProfile, ISocialProfile iSocialProfile) {
+    public User addUserAndSocialProfile(User user) {
         this.insert(user) ;
         return user ;
     }
 
     @Override
-    public CompletionStage<User> addUserAndSocialProfileAsync(User user, SocialProfile socialProfile, ISocialProfile iSocialProfile) {
-        return supplyAsync(() -> wrapInTransaction(entityManager -> addUserAndSocialProfile(user, socialProfile, iSocialProfile)), executionContext);
+    public CompletionStage<User> addUserAndSocialProfileAsync(User user) {
+        return supplyAsync(() -> wrapInTransaction(entityManager -> addUserAndSocialProfile(user)), dbExecutionContext);
     }
 }

@@ -49,6 +49,6 @@ public class SocialProfileHelper extends BaseModelHelper<SocialProfile, Long> im
 
     @Override
     public CompletionStage<SocialProfile> getByNetworkAndNetworkIdAsync(String socialNetwork, String socialNetworkId) {
-        return supplyAsync(() -> wrapInTransaction(entityManager -> getByNetworkAndNetworkId(socialNetwork, socialNetworkId)) , executionContext) ;
+        return supplyAsync(() -> wrapInTransaction(entityManager -> getByNetworkAndNetworkId(socialNetwork, socialNetworkId)) , dbExecutionContext) ;
     }
 }

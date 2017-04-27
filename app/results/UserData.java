@@ -7,11 +7,13 @@ import models.User;
  * Created by yuva on 18/4/17.
  */
 public class UserData {
-    public User user ;
-    public String userStatus ;
+    public final User user ;
+    public final String userStatus ;
+    public final String serverTimeAtStart ;
 
-    public UserData(User _user, String _userStatus) {
-        this.user = _user ;
-        this.userStatus = _userStatus ;
+    public UserData(User user, String userStatus, String serverTimeAtStart) {
+        this.user = user ;
+        this.userStatus = userStatus ;
+        this.serverTimeAtStart = serverTimeAtStart ;
     }
 }

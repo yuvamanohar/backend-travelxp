@@ -38,15 +38,17 @@ create table `posts`(
   `scribble` TEXT DEFAULT NULL,
   `latitude` DOUBLE DEFAULT NULL,
   `longitude` DOUBLE DEFAULT NULL,
+  `location` TEXT DEFAULT NULL,
   `likes` INT DEFAULT NULL,
   `comments` INT DEFAULT NULL,
   `shares` INT DEFAULT NULL,
-  `createdAt` DATETIME NOT NULL,
-  `updatedAt` DATETIME NOT NULL,
+  `createdAt` DATETIME(0) NOT NULL,
+  `updatedAt` DATETIME(0) NOT NULL,
   `softDeleted` tinyint(1) default 0,
   INDEX `idx_post_soft_deleted` (`postId`, `softDeleted`),
   INDEX `idx_post_lat` (`latitude`),
   INDEX `idx_post_long` (`longitude`),
+  INDEX `idx_post_updatedAt` (`updatedAt`),
   CONSTRAINT fk_post_user FOREIGN KEY (`userId`) REFERENCES users(`userId`)
 ) ENGINE=InnoDB;
 
@@ -55,8 +57,8 @@ create table `postDetails`(
   `postId` BIGINT,
   `media` TEXT NOT NULL,
   `mediaType` ENUM('GIF', 'PHOTO', 'VIDEO') NOT NULL,
-  `createdAt` DATETIME NOT NULL,
-  `updatedAt` DATETIME NOT NULL,
+  `createdAt` DATETIME(0) NOT NULL,
+  `updatedAt` DATETIME(0) NOT NULL,
   `softDeleted` tinyint(1) default 0,
   INDEX `idx_post_soft_deleted` (`postDetailId`, `softDeleted`),
   CONSTRAINT fk_post_detail_post FOREIGN KEY (`postId`) REFERENCES posts(`postId`)
