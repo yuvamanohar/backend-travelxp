@@ -38,6 +38,7 @@ public class Post extends BaseModel {
     @ManyToOne
     @JoinColumn(name = "userId",
             foreignKey = @ForeignKey(name = "fk_post_user"))
+    @JsonIgnore
     private User user ;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -80,5 +81,20 @@ public class Post extends BaseModel {
         postDetails.remove( postDetail );
         postDetail.setPost( null );
     }
+
+    public Long getUserId() {
+        return user.userId ;
+    }
+
+    @JsonIgnore(false)
+    public String getCreatedAt() {
+        return super.getCreatedAt() ;
+    }
+
+    @JsonIgnore(false)
+    public String getUpdatedAt() {
+        return super.getUpdatedAt() ;
+    }
+
 }
 

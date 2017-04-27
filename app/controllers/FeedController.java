@@ -1,17 +1,16 @@
 package controllers;
 
-import cdn.ICdn;
 import modelhelpers.IPost;
 import modelhelpers.IUser;
+import models.PartialFeed;
+import models.PartialFeed.FeedType;
 import play.db.jpa.Transactional;
 import play.libs.Json;
-import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Result;
 
 import javax.inject.Inject;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
 
 /**
  * Created by yuva on 27/4/17.
@@ -37,7 +36,8 @@ public class FeedController extends BaseController {
 //        String mostRecentPostTime = allParams.get(MOST_RECENT_POST_TIME) ;
         String leastRecentPostTime = allParams.get(LEAST_RECENT_POST_TIME) ;
 
-        return iPost.getPostsOlderThanAsync(leastRecentPostTime, FEED_BATCH_COUNT).thenApplyAsync(p -> ok(Json.toJson(p))) ;
+        return iPost.getPostsOlderThanAsync(leastRecentPostTime, FEED_BATCH_COUNT)
+                    .thenApplyAsync(p -> ok(Json.toJson(new PartialFeed(p, FeedType.OLDER_FEED)))) ;
     }
 
     @Transactional
@@ -46,7 +46,8 @@ public class FeedController extends BaseController {
         String mostRecentPostTime = allParams.get(MOST_RECENT_POST_TIME) ;
 //        String leastRecentPostTime = allParams.get(LEAST_RECENT_POST_TIME) ;
 
-        return iPost.getPostsNewerThanAsync(mostRecentPostTime, FEED_BATCH_COUNT).thenApplyAsync(p -> ok(Json.toJson(p))) ;
+        return iPost.getPostsNewerThanAsync(mostRecentPostTime, FEED_BATCH_COUNT)
+                    .thenApplyAsync(p -> ok(Json.toJson(new PartialFeed(p, FeedType.REFRESH_FEED)))) ;
     }
 
 }

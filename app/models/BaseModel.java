@@ -14,10 +14,8 @@ import javax.persistence.PreUpdate;
 @MappedSuperclass
 public abstract class BaseModel {
 
-    @JsonIgnore
-    public String createdAt ;
-
-    public String updatedAt ;
+    private String createdAt ;
+    private String updatedAt ;
 
     @JsonIgnore
     public Boolean softDeleted ;
@@ -36,5 +34,23 @@ public abstract class BaseModel {
 
     public void setSoftDeleted() {
         this.softDeleted = true ;
+    }
+
+    @JsonIgnore
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @JsonIgnore
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

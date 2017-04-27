@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.Objects;
 
 /**
  * Created by yuva on 17/4/17.
@@ -60,5 +61,23 @@ public class User extends BaseModel {
             socialProfile.setUser(this);
             this.socialProfile = null;
         }
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if ( this == o ) {
+            return true;
+        }
+        if ( o == null || getClass() != o.getClass() ) {
+            return false;
+        }
+        User user = (User) o;
+        return Objects.equals( userId, user.userId ) && Objects.equals(socialProfile.socialProfileId, user.socialProfile.socialProfileId) ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, socialProfile.socialProfileId);
     }
 }
