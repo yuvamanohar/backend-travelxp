@@ -16,14 +16,11 @@ import java.util.List;
                 name = "post_get_by_id",
                 query = "select p from Post p where p.postId = :postId and softDeleted = :softDeleted"),
         @NamedQuery(
-                name = "get_posts_at_time",
-                query = "select p from Post p where p.updatedAt = :leastRecentPostTime and softDeleted = :softDeleted"),
-        @NamedQuery(
                 name = "get_older_posts",
-                query = "select p from Post p where p.updatedAt < :leastRecentPostTime and softDeleted = :softDeleted order by p.updatedAt desc"),
+                query = "select p from Post p where p.updatedAt < :referenceTime and softDeleted = :softDeleted order by p.updatedAt desc, p.postId desc"),
         @NamedQuery(
                 name = "get_newer_posts",
-                query = "select p from Post p where p.updatedAt >= :mostRecentPostTime and softDeleted = :softDeleted order by p.updatedAt desc")
+                query = "select p from Post p where p.updatedAt >= :mostRecentPostTime and softDeleted = :softDeleted order by p.updatedAt desc, p.postId desc")
 })
 
 @Entity

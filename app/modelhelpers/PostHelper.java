@@ -45,30 +45,17 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
         return supplyAsync(() -> wrapInTransaction(em -> insertPostAndPostDetails(post)), dbExecutionContext);
     }
 
-    public List<Post> getPostsOlderThan(String leastRecentPostTime, int count) {
-        /* Get all posts having a particular time at one shot, this is to simplify code.
-           TODO - V10, may be this will need optimisation if the number of posts for a particular time
-            starts shooting based on all other conditions */
-        TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("get_posts_at_time", Post.class)
-                .setParameter("leastRecentPostTime", leastRecentPostTime)
-                .setParameter("softDeleted", false) ;
-
-        List<Post> allPosts = typedQuery.getResultList() ;
-
-        if(allPosts.size() < count) {
-            TypedQuery<Post> morePosts = jpaApi.em().createNamedQuery("get_older_posts", Post.class)
-                    .setParameter("leastRecentPostTime", leastRecentPostTime)
-                    .setParameter("softDeleted", false).setMaxResults(count) ;
-            List<Post> remainingPosts = morePosts.getResultList() ;
-            allPosts.addAll(remainingPosts) ;
-        }
-
-        return allPosts ;
+    public List<Post> getPostsOlderThan(String referenceTime, int offset, int count) {
+        TypedQuery<Post> morePosts = jpaApi.em().createNamedQuery("get_older_posts", Post.class)
+                                                .setParameter("referenceTime", referenceTime)
+                                                .setParameter("softDeleted", false).setFirstResult(offset)
+                                                .setMaxResults(count) ;
+        return morePosts.getResultList() ;
     }
 
     @Override
-    public CompletionStage<List<Post>> getPostsOlderThanAsync(String leastRecentPostTime, int count) {
-        return supplyAsync(() -> wrapInTransaction(em -> getPostsOlderThan(leastRecentPostTime, count)), dbExecutionContext) ;
+    public CompletionStage<List<Post>> getPostsOlderThanAsync(String referenceTime, int offset, int count) {
+        return supplyAsync(() -> wrapInTransaction(em -> getPostsOlderThan(referenceTime, offset, count)), dbExecutionContext) ;
     }
 
     /**

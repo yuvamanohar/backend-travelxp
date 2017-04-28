@@ -13,7 +13,7 @@ public class DateFormatter {
     public static String getReadableCurrentTime() {
         Date now = Calendar.getInstance().getTime();
 
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss") ;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss") ;
         return formatter.format(now) ;
     }
 

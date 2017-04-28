@@ -9,25 +9,29 @@ import java.util.Set;
  */
 public class PartialFeed {
     public enum FeedType {
-        REFRESH_FEED,
+        UPDATED_FEED,
         OLDER_FEED ;
     }
 
     public final List<Post> posts ;
     public Set<User> users ;
     public String mostRecentPostTime ;
-    public String leastRecentPostTime ;
+    public Integer offset ;
     public final FeedType feedType ;
+    public final Boolean olderFeedEnd;
 
     // When refreshing posts, it may so happen that we cannot send all the updated posts at one shot
-    // In such case this time be leastRecentPostTime of updated posts
+    // In such case this time be referenceTime of updated posts
     // TODO in later version it gets tricky if the user keeps refreshing and keep checking partial updates
     // TODO Client has to handle such case..possibly by clearing up the whole list and re-populate
 //    public String truncatedMostRecentPostTime ;
 //    public boolean isEndOfFeed ;
 
-    public PartialFeed(List<Post> posts, FeedType feedType) {
+    public PartialFeed(List<Post> posts, FeedType feedType, int offset, boolean olderFeedEnd) {
         this.posts = posts ;
+        this.olderFeedEnd = olderFeedEnd;
+        this.offset = offset ;
+        this.feedType = feedType ;
 
         if(posts.size() > 0) {
             users = new HashSet<>() ;
@@ -36,8 +40,6 @@ public class PartialFeed {
             }
 
             this.mostRecentPostTime = posts.get(0).getUpdatedAt();
-            this.leastRecentPostTime = posts.get(posts.size() - 1).getUpdatedAt();
         }
-        this.feedType = feedType ;
     }
 }

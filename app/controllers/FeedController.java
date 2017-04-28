@@ -17,8 +17,12 @@ import java.util.concurrent.CompletionStage;
  */
 public class FeedController extends BaseController {
     public static String MOST_RECENT_POST_TIME = "mostRecentPostTime" ;
-    public static String LEAST_RECENT_POST_TIME = "leastRecentPostTime" ;
-    public static Integer FEED_BATCH_COUNT = 20 ;
+    public static String REFERENCE_TIME = "referenceTime" ;
+    public static String FEED_BATCH_SIZE = "feedBatchSize" ;
+    public static String OFFSET = "offset" ; // Offset from first reference_post
+
+    public static Integer DEFAULT_FEED_BATCH_SIZE = 20 ;
+    public static Integer DEFAULT_OFFSET = 0 ;
 
     private final IUser iUser ;
     private final IPost iPost ;
@@ -33,21 +37,33 @@ public class FeedController extends BaseController {
     @Transactional
     public CompletionStage<Result> getOlderFeed(Long userId) {
         Map<String, String> allParams = getAllParams(request()) ;
-//        String mostRecentPostTime = allParams.get(MOST_RECENT_POST_TIME) ;
-        String leastRecentPostTime = allParams.get(LEAST_RECENT_POST_TIME) ;
 
-        return iPost.getPostsOlderThanAsync(leastRecentPostTime, FEED_BATCH_COUNT)
-                    .thenApplyAsync(p -> ok(Json.toJson(new PartialFeed(p, FeedType.OLDER_FEED)))) ;
+        String referencePostTime = allParams.get(REFERENCE_TIME) ;
+        Integer batchCount = allParams.get(FEED_BATCH_SIZE) != null ? Integer.parseInt(allParams.get(FEED_BATCH_SIZE)) : DEFAULT_FEED_BATCH_SIZE;
+        Integer offset = allParams.get(OFFSET) != null ? Integer.parseInt(allParams.get(OFFSET)) : DEFAULT_OFFSET ;
+
+        return iPost.getPostsOlderThanAsync(referencePostTime, offset, batchCount +1)
+                    .thenApplyAsync(p -> {
+                        if(p.size() <= DEFAULT_FEED_BATCH_SIZE) {
+                            return ok(Json.toJson(new PartialFeed(p, FeedType.OLDER_FEED,
+                                        offset + p.size(), true))) ;
+                        } else {
+                            return ok(Json.toJson(new PartialFeed(p.subList(0, p.size()-1), FeedType.OLDER_FEED,
+                                            offset + batchCount, false))) ;
+                        }
+                    }) ;
+
     }
 
     @Transactional
     public CompletionStage<Result> getUpdatedFeed(Long userId) {
         Map<String, String> allParams = getAllParams(request()) ;
         String mostRecentPostTime = allParams.get(MOST_RECENT_POST_TIME) ;
-//        String leastRecentPostTime = allParams.get(LEAST_RECENT_POST_TIME) ;
+//        String referenceTime = allParams.get(LEAST_RECENT_POST_TIME) ;
 
-        return iPost.getPostsNewerThanAsync(mostRecentPostTime, FEED_BATCH_COUNT)
-                    .thenApplyAsync(p -> ok(Json.toJson(new PartialFeed(p, FeedType.REFRESH_FEED)))) ;
+        return iPost.getPostsNewerThanAsync(mostRecentPostTime, DEFAULT_FEED_BATCH_SIZE)
+                    .thenApplyAsync(p -> ok(Json.toJson(new PartialFeed(p, FeedType.UPDATED_FEED,
+                                                        -1, false)))) ;
     }
 
 }
