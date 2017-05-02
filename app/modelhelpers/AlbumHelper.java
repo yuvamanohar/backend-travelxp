@@ -2,15 +2,14 @@ package modelhelpers;
 
 import com.google.inject.Inject;
 import models.Album;
-import models.Post;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
 
 import javax.persistence.TypedQuery;
-import java.lang.reflect.Type;
 import java.util.List;
-import static java.util.concurrent.CompletableFuture.supplyAsync ;
 import java.util.concurrent.CompletionStage;
+
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
  * Created by yuva on 2/5/17.

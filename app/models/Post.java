@@ -31,7 +31,7 @@ import java.util.Locale;
                 query = "select p from Post p where p.createdAt >= :time and softDeleted = :softDeleted order by p.updatedAt desc, p.postId desc"),
         @NamedQuery(
                 name = "get_orphaned_posts_by_user",
-                query = "select p from Post p where p.albumId = NULL and softDeleted = false order by p.updatedAt desc, p.postId desc")
+                query = "select p from Post p where p.user = :userId and p.album = NULL and softDeleted = false order by p.updatedAt desc, p.postId desc")
 })
 
 @Entity

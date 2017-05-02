@@ -41,7 +41,8 @@ create table `albums`(
   `createdAt` DATETIME NOT NULL,
   `updatedAt` DATETIME NOT NULL,
   `softDeleted` tinyint(1) default 0,
-  INDEX `idx_post_soft_deleted` (`albumId`, `softDeleted`),
+  INDEX `idx_album_soft_deleted` (`albumId`, `softDeleted`),
+  INDEX `idx_album_user_soft_deleted` (`userId`, `softDeleted`),
   CONSTRAINT fk_album_user FOREIGN KEY (`userId`) REFERENCES users(`userId`)
 ) ENGINE=InnoDB;
 
@@ -60,6 +61,7 @@ create table `posts`(
   `updatedAt` DATETIME NOT NULL,
   `softDeleted` tinyint(1) default 0,
   INDEX `idx_post_soft_deleted` (`postId`, `softDeleted`),
+  INDEX `idx_post_user_album_soft_deleted` (`userId`, `albumId`, `softDeleted`),
   INDEX `idx_post_lat` (`latitude`),
   INDEX `idx_post_long` (`longitude`),
   INDEX `idx_post_updatedAt` (`updatedAt`),

@@ -95,7 +95,8 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
     }
 
     public List<Post> getAllOrphanedPosts(Long userId) {
-        TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("get_orphaned_posts_by_user", Post.class) ;
+        TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("get_orphaned_posts_by_user", Post.class)
+                                            .setParameter("userId", userId) ;
         return typedQuery.getResultList() ;
     }
 
