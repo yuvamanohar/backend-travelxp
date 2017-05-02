@@ -1,9 +1,11 @@
 package modelhelpers;
 
 import com.google.inject.Inject;
+import javafx.geometry.Pos;
 import models.Post;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
+import utils.DateFormatter;
 
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -18,20 +20,20 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
 
     @Inject
     public PostHelper(JPAApi jpaApi, DatabaseExecutionContext executionContext) {
-        super(jpaApi, executionContext);
+        super(jpaApi, executionContext, Post.class);
     }
 
-    @Override
-    public Post get(Long socialProfileId) {
-        TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("post_get_by_id", Post.class)
-                .setParameter("postId", socialProfileId)
-                .setParameter("softDeleted", false) ;
-        try {
-            return typedQuery.getSingleResult();
-        } catch (NoResultException e) {
-            return  null ;
-        }
-    }
+//    @Override
+//    public Post get(Long socialProfileId) {
+//        TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("post_get_by_id", Post.class)
+//                .setParameter("postId", socialProfileId)
+//                .setParameter("softDeleted", false) ;
+//        try {
+//            return typedQuery.getSingleResult();
+//        } catch (NoResultException e) {
+//            return  null ;
+//        }
+//    }
 
     @Override
     public Post insertPostAndPostDetails(Post post) {
@@ -75,5 +77,30 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
     @Override
     public CompletionStage<List<Post>> getPostsNewerThanAsync(String mostRecentPostTime, int count) {
         return supplyAsync(() -> wrapInTransaction(em -> getPostsNewerThan(mostRecentPostTime, count)), dbExecutionContext);
+    }
+
+    public List<Post> getPostsInLastXDays(int x) {
+        String time = DateFormatter.getTimeBeforeXdays(x) ;
+        TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("get_posts_in_last_x_days", Post.class)
+                .setParameter("time", time)
+                .setParameter("softDeleted", false) ;
+
+        return typedQuery.getResultList() ;
+
+    }
+
+    @Override
+    public CompletionStage<List<Post>> getPostsInLastXDaysAsync(int x) {
+        return supplyAsync(() -> wrapInTransaction(em -> getPostsInLastXDays(x)), dbExecutionContext);
+    }
+
+    public List<Post> getAllOrphanedPosts(Long userId) {
+        TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("get_orphaned_posts_by_user", Post.class) ;
+        return typedQuery.getResultList() ;
+    }
+
+    @Override
+    public CompletionStage<List<Post>> getAllOrphanedPostsAsync(Long userId) {
+        return supplyAsync(() -> wrapInTransaction(em -> getAllOrphanedPosts(userId)), dbExecutionContext) ;
     }
 }

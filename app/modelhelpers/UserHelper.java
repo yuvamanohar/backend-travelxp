@@ -18,20 +18,20 @@ public class UserHelper extends BaseModelHelper<User, Long> implements IUser {
 
     @Inject
     public UserHelper(JPAApi jpaApi, DatabaseExecutionContext executionContext) {
-        super(jpaApi, executionContext);
+        super(jpaApi, executionContext, User.class);
     }
 
-    @Override
-    public User get(Long userId) {
-        TypedQuery<User> typedQuery = jpaApi.em().createNamedQuery("user_get_by_id", User.class)
-                .setParameter("userId", userId)
-                .setParameter("softDeleted", false) ;
-        try {
-            return typedQuery.getSingleResult();
-        } catch (NoResultException e) {
-            return  null ;
-        }
-    }
+//    @Override
+//    public User get(Long userId) {
+//        TypedQuery<User> typedQuery = jpaApi.em().createNamedQuery("user_get_by_id", User.class)
+//                .setParameter("userId", userId)
+//                .setParameter("softDeleted", false) ;
+//        try {
+//            return typedQuery.getSingleResult();
+//        } catch (NoResultException e) {
+//            return  null ;
+//        }
+//    }
 
     @Override
     public User updatePlatformandDeviceId(Long userId, String platform, String deviceId) {

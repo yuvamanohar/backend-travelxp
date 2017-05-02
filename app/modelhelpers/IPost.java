@@ -17,4 +17,8 @@ public interface IPost {
 
     public CompletionStage<List<Post>> getPostsOlderThanAsync(String referenceTime, int offset, int count) ;
     public CompletionStage<List<Post>> getPostsNewerThanAsync(String mostRecentPostTime, int count) ;
+
+    public CompletionStage<List<Post>> getPostsInLastXDaysAsync(int x) ;
+
+    public CompletionStage<List<Post>> getAllOrphanedPostsAsync(Long userId) ;
 }

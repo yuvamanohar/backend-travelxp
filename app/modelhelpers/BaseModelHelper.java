@@ -6,6 +6,13 @@ import services.DatabaseExecutionContext;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
@@ -18,11 +25,13 @@ public abstract class BaseModelHelper<T extends BaseModel, K> {
 
     protected final JPAApi jpaApi;
     protected final DatabaseExecutionContext dbExecutionContext;
+    protected Class<T> tClass ;
 
     @Inject
-    public BaseModelHelper(JPAApi jpaApi, DatabaseExecutionContext dbExecutionContext) {
+    public BaseModelHelper(JPAApi jpaApi, DatabaseExecutionContext dbExecutionContext, Class tClass) {
         this.jpaApi = jpaApi;
         this.dbExecutionContext = dbExecutionContext;
+        this.tClass = tClass ;
     }
 
     public T insert(T model) {
@@ -43,7 +52,22 @@ public abstract class BaseModelHelper<T extends BaseModel, K> {
         return  supplyAsync(() -> wrapInTransaction(em -> merge(model)), dbExecutionContext) ;
     }
 
-    public abstract T get(K primaryKey) ;
+   public T get(K primaryKey)  {
+
+       CriteriaBuilder builder = jpaApi.em().getCriteriaBuilder();
+
+       CriteriaQuery<T> criteria = builder.createQuery(tClass);
+       Root<T> root = criteria.from( tClass );
+       criteria.select( root );
+       criteria.where( builder.equal( root.get( "softDeleted" ), false ) );
+
+       List<T> results = jpaApi.em().createQuery( criteria ).getResultList() ;
+
+       if(results.size() > 0)
+           return results.get(0) ;
+
+       return null ;
+    }
 
     public CompletionStage<T> getAsync(K primaryKey) {
         return  supplyAsync(() -> wrapInTransaction(em -> get(primaryKey)), dbExecutionContext) ;

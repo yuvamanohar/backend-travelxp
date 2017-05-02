@@ -15,6 +15,7 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 # User controller actions
 POST    /v1/bootstrap                                          controllers.UserController.bootstrap()
 POST    /v1/deleteUser/:userId                                 controllers.UserController.deleteUser(userId: Long)
+GET     /v1/getUser/:userId                                    controllers.UserController.getUser(userId: Long)
 
 #PostController
 PUT    /v1/user/:userId/postContent                            controllers.PostController.postContent(userId: Long)
@@ -22,3 +23,6 @@ PUT    /v1/user/:userId/postContent                            controllers.PostC
 #FeedController
 GET    /v1/user/:userId/getOlderFeed                           controllers.FeedController.getOlderFeed(userId: Long)
 GET    /v1/user/:userId/getUpdatedFeed                         controllers.FeedController.getUpdatedFeed(userId: Long)
+
+#ProfileController
+GET    /v1/user/:userId/getProfileInfo                          controllers.ProfileController.getProfileInfo(userId: Long)

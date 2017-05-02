@@ -3,9 +3,14 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import utils.Config;
+import utils.GeoUtils;
+import utils.Location;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by yuva on 17/4/17.
@@ -20,7 +25,13 @@ import java.util.List;
                 query = "select p from Post p where p.updatedAt < :referenceTime and softDeleted = :softDeleted order by p.updatedAt desc, p.postId desc"),
         @NamedQuery(
                 name = "get_newer_posts",
-                query = "select p from Post p where p.updatedAt >= :mostRecentPostTime and softDeleted = :softDeleted order by p.updatedAt desc, p.postId desc")
+                query = "select p from Post p where p.updatedAt >= :mostRecentPostTime and softDeleted = :softDeleted order by p.updatedAt desc, p.postId desc"),
+        @NamedQuery(
+                name = "get_posts_in_last_x_days",
+                query = "select p from Post p where p.createdAt >= :time and softDeleted = :softDeleted order by p.updatedAt desc, p.postId desc"),
+        @NamedQuery(
+                name = "get_orphaned_posts_by_user",
+                query = "select p from Post p where p.albumId = NULL and softDeleted = false order by p.updatedAt desc, p.postId desc")
 })
 
 @Entity
@@ -38,6 +49,12 @@ public class Post extends BaseModel {
     @JsonIgnore
     private User user ;
 
+    @ManyToOne
+    @JoinColumn(name = "albumId",
+            foreignKey = @ForeignKey(name = "fk_post_album"))
+    @JsonIgnore
+    private Album album ;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     public List<PostDetail> postDetails ;
 
@@ -49,6 +66,9 @@ public class Post extends BaseModel {
     public Integer comments ;
     public Integer shares ;
 
+    @Transient
+    private Location geoLocation ;
+
     public Post() {}
 
     public User getUser() {
@@ -58,6 +78,14 @@ public class Post extends BaseModel {
     public Post setUser(User user) {
         this.user = user;
         return this ;
+    }
+
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
     }
 
     public List<PostDetail> getPostDetails() {
@@ -83,6 +111,13 @@ public class Post extends BaseModel {
         return user.userId ;
     }
 
+    public Long getAlbumId() {
+        if(album != null)
+            return album.albumId ;
+
+        return null ;
+    }
+
     @JsonIgnore(false)
     public String getCreatedAt() {
         return super.getCreatedAt() ;
@@ -93,5 +128,22 @@ public class Post extends BaseModel {
         return super.getUpdatedAt() ;
     }
 
+    public Location getGeoLocation() {
+        if(geoLocation == null) {
+            loadGeoLocation();
+        }
+        return geoLocation;
+    }
+
+    public void setGeoLocation(Location geoLocation) {
+        this.geoLocation = geoLocation;
+    }
+
+    @PostLoad
+    public void loadGeoLocation() {
+        if(this.latitude != null && this.longitude != null) {
+            geoLocation = Location.get(this.latitude, this.longitude);
+        }
+    }
 }
 

@@ -92,4 +92,9 @@ public class UserController extends BaseController {
         return iUser.mergeAsync(user) ;
     }
 
+    @Transactional
+    public Result getUser(Long userId) {
+        return  ok(Json.toJson(iUser.get(userId))) ;
+    }
+
 }

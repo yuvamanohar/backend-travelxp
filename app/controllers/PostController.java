@@ -2,8 +2,11 @@ package controllers;
 
 import cdn.CdnRequest;
 import cdn.ICdn;
+import javafx.geometry.Pos;
+import modelhelpers.IAlbum;
 import modelhelpers.IPost;
 import modelhelpers.IUser;
+import models.Album;
 import models.Post;
 import models.PostDetail;
 import play.db.jpa.Transactional;
@@ -12,6 +15,8 @@ import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Http;
 import play.mvc.Result;
 import utils.Config;
+import utils.GeoUtils;
+import utils.Location;
 
 import javax.inject.Inject;
 import java.io.File;
@@ -26,16 +31,16 @@ import java.util.concurrent.Executor;
 public class PostController extends BaseController {
     public static final String DESC_KEY = "description" ;
 
+    private final IAlbum iAlbum ;
     private final IUser iUser ;
     private final IPost iPost ;
-    private final Executor ec;
     private final ICdn iCdn;
 
     @Inject
-    public PostController(IPost post, IUser user, HttpExecutionContext ec, ICdn iCdn) {
+    public PostController(IAlbum album, IPost post, IUser user, ICdn iCdn) {
+        this.iAlbum = album ;
         this.iUser = user;
         this.iPost = post ;
-        this.ec = ec.current();
         this.iCdn = iCdn ;
     }
 
@@ -68,10 +73,59 @@ public class PostController extends BaseController {
                 }
             }
 
-            CompletionStage<Post> postCompletionStage = iUser.getAsync(userId).thenApplyAsync(u -> post.setUser(u)) ;
-            return postCompletionStage.thenComposeAsync(
-                    p -> iPost.insertPostAndPostDetailsAsync(p)).thenApplyAsync(post1 -> ok(Json.toJson(post1)));
+            return  iUser.getAsync(userId).thenComposeAsync(u ->
+                    {
+                        post.setUser(u) ;
+                        CompletionStage<Album> albumCompletionStage = getOrCreateAlbumForPost(post) ;
+                        if(albumCompletionStage != null) {
+                            return albumCompletionStage.thenComposeAsync( a ->
+                            {
+                                if(a.albumId == null) {
+                                    a.setUser(u);
+                                    return iAlbum.insertAsync(a).thenApplyAsync(a1 -> ok(Json.toJson(post))) ;
+                                } else {
+                                    return iAlbum.mergeAsync(a).thenApplyAsync(a1 -> ok(Json.toJson(post))) ;
+                                }
+                            }) ;
+                        } else {
+                            return iPost.insertPostAndPostDetailsAsync(post).thenApplyAsync(post1 -> ok(Json.toJson(post1)));
+                        }
+                    }) ;
+
         }) ;
     }
 
+    private CompletionStage<Album> getOrCreateAlbumForPost(Post newPost) {
+        // No album for null locations
+        if(newPost.latitude == null || newPost.longitude == null) {
+            return null ;
+        }
+
+        CompletionStage<List<Post>> postInLastXDays = iPost.getPostsInLastXDaysAsync(Config.ALBUM_TIME_SPAN_THRESHOLD) ;
+        Location newPostLocation = Location.get(newPost.latitude, newPost.longitude) ;
+
+        return postInLastXDays.thenApplyAsync(i -> {
+            double leastDistance = Double.MAX_VALUE ;
+            Post nearestPost = null ;
+            for(Post oldPost : i) {
+                if(oldPost.getGeoLocation() != null) {
+                    if(newPostLocation.isInSameVicinityAs(oldPost.getGeoLocation())) {
+                        if(newPostLocation.getDistanceTo(oldPost.getGeoLocation()) < leastDistance) {
+                            leastDistance = newPostLocation.getDistanceTo(oldPost.getGeoLocation());
+                            nearestPost = oldPost;
+                        }
+                    }
+
+                }
+            }
+
+            return  nearestPost ;
+        }).thenApplyAsync(nearestPost -> {
+            if(nearestPost != null) {
+                return nearestPost.getAlbum().addPost(newPost) ;
+            } else {
+                return new Album().addPost(newPost);
+            }
+        }) ;
+    }
 }

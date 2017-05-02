@@ -19,20 +19,20 @@ public class SocialProfileHelper extends BaseModelHelper<SocialProfile, Long> im
 
     @Inject
     public SocialProfileHelper(JPAApi jpaApi, DatabaseExecutionContext executionContext) {
-        super(jpaApi, executionContext);
+        super(jpaApi, executionContext, SocialProfile.class);
     }
 
-    @Override
-    public SocialProfile get(Long socialProfileId) {
-        TypedQuery<SocialProfile> socialProfileTypedQuery = jpaApi.em().createNamedQuery("sp_get_by_id", SocialProfile.class)
-                .setParameter("socialProfileId", socialProfileId)
-                .setParameter("softDeleted", true) ;
-        try {
-            return socialProfileTypedQuery.getSingleResult();
-        } catch (NoResultException e) {
-            return  null ;
-        }
-    }
+//    @Override
+//    public SocialProfile get(Long socialProfileId) {
+//        TypedQuery<SocialProfile> socialProfileTypedQuery = jpaApi.em().createNamedQuery("sp_get_by_id", SocialProfile.class)
+//                .setParameter("socialProfileId", socialProfileId)
+//                .setParameter("softDeleted", true) ;
+//        try {
+//            return socialProfileTypedQuery.getSingleResult();
+//        } catch (NoResultException e) {
+//            return  null ;
+//        }
+//    }
 
     @Override
     public SocialProfile getByNetworkAndNetworkId(String socialNetwork, String socialNetworkId) {
