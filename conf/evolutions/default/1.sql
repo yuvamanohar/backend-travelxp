@@ -1,6 +1,7 @@
 # --- !Ups
 create table `users`(
   `userId` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `userName` varchar(255) NOT NULL,
   `aboutMe` TEXT DEFAULT NULL,
   `mobile` BIGINT DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
@@ -9,7 +10,8 @@ create table `users`(
   `createdAt` DATETIME NOT NULL,
   `updatedAt` DATETIME NOT NULL,
   `softDeleted` tinyint(1) default 0,
-  INDEX `idx_user_id_soft_deleted` (`userId`, `softDeleted`)
+  INDEX `idx_user_id_soft_deleted` (`userId`, `softDeleted`),
+  CONSTRAINT `idx_user_name` UNIQUE (`userName`(30), `softDeleted`)
 ) ENGINE=InnoDB;
 
 create table `socialProfiles`(
@@ -81,8 +83,20 @@ create table `postDetails`(
   CONSTRAINT fk_post_detail_post FOREIGN KEY (`postId`) REFERENCES posts(`postId`)
 ) ENGINE=InnoDB;
 
+create table `fanRelations`(
+  `fanRelationId` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `fanUserId` BIGINT NOT NULL,
+  `influencerUserId` BIGINT NOT NULL,
+  `createdAt` DATETIME NOT NULL,
+  `updatedAt` DATETIME NOT NULL,
+  `softDeleted` tinyint(1) default 0,
+  INDEX `idx_fan_relation_soft_deleted` (`fanRelationId`, `softDeleted`),
+  CONSTRAINT fk_fan_relation_fan_user FOREIGN KEY (`fanUserId`) REFERENCES users(`userId`),
+  CONSTRAINT fk_fan_relation_influencer_user FOREIGN KEY (`influencerUserId`) REFERENCES users(`userId`)
+) ENGINE=InnoDB;
 
 # --- !Downs
+drop table `fanRelations` ;
 drop table `postDetails` ;
 drop table `posts` ;
 drop table `albums` ;

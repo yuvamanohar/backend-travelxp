@@ -6,6 +6,9 @@ import modelhelpers.UserHelper;
 import models.SocialProfile;
 import models.User;
 
+import javax.persistence.PersistenceException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 /**
@@ -32,4 +35,6 @@ public interface IUser {
 
     public User merge(User user) ;
     public CompletionStage<User> mergeAsync(User user) ;
+
+    public CompletionStage<List<User>> getSearchUsersAsync(String name) ;
 }

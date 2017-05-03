@@ -69,7 +69,7 @@ public class UserController extends BaseController {
 //                                    ok(Json.toJson(new UserData(j, BaseController.OLD_USER_NEW_DEVICE))), ec.current()) ;
 //                    }
             } else {
-                User newUser = new User(user.mobile, user.email, user.platform, user.deviceId, false) ;
+                User newUser = new User(user.mobile, sp.completeName, user.email, user.platform, user.deviceId, false) ;
                 SocialProfile socialProfile = new SocialProfile(sp.socialNetwork, sp.socialNetworkId,
                                                         sp.firstName, sp.middleName, sp.lastName,
                                                         sp.completeName, sp.profilePic, false) ;

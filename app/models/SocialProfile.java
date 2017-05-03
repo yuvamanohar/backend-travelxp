@@ -14,10 +14,7 @@ import javax.persistence.*;
 @NamedQueries({
         @NamedQuery(
                 name = "sp_get_by_network_and_network_id",
-                query = "select sp from SocialProfile sp where sp.socialNetwork = :socialNetwork and sp.socialNetworkId = :socialNetworkId and softDeleted = :softDeleted"),
-        @NamedQuery(
-                name = "sp_get_by_id",
-                query = "select sp from SocialProfile sp where sp.socialProfileId = :socialProfileId and softDeleted = :softDeleted")
+                query = "select sp from SocialProfile sp where sp.socialNetwork = :socialNetwork and sp.socialNetworkId = :socialNetworkId and softDeleted = false")
 })
 
 @Entity
@@ -63,6 +60,12 @@ public class SocialProfile extends BaseModel {
         this.completeName = completeName ;
         this.profilePic = profilePic ;
         this.softDeleted = softDeleted ;
+    }
+
+    public SocialProfile copy() {
+        return new SocialProfile(this.socialNetwork, this.socialNetworkId,
+                                this.firstName, this.middleName, this.lastName, this.completeName,
+                                this.profilePic, this.softDeleted) ;
     }
 }
 

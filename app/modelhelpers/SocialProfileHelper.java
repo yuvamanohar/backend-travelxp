@@ -38,8 +38,7 @@ public class SocialProfileHelper extends BaseModelHelper<SocialProfile, Long> im
     public SocialProfile getByNetworkAndNetworkId(String socialNetwork, String socialNetworkId) {
         TypedQuery<SocialProfile> socialProfileTypedQuery = jpaApi.em().createNamedQuery("sp_get_by_network_and_network_id", SocialProfile.class)
                                                                         .setParameter("socialNetwork", socialNetwork)
-                                                                        .setParameter("socialNetworkId", socialNetworkId)
-                                                                        .setParameter("softDeleted", false) ;
+                                                                        .setParameter("socialNetworkId", socialNetworkId) ;
         try {
             return socialProfileTypedQuery.getSingleResult();
         } catch (NoResultException e) {

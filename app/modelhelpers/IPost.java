@@ -3,6 +3,7 @@ package modelhelpers;
 import com.google.inject.ImplementedBy;
 import models.Post;
 import models.PostDetail;
+import models.User;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -20,5 +21,5 @@ public interface IPost {
 
     public CompletionStage<List<Post>> getPostsInLastXDaysAsync(int x) ;
 
-    public CompletionStage<List<Post>> getAllOrphanedPostsAsync(Long userId) ;
+    public CompletionStage<List<Post>> getAllOrphanedPostsAsync(User user) ;
 }

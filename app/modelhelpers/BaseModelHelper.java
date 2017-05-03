@@ -1,6 +1,7 @@
 package modelhelpers;
 
 import models.BaseModel;
+import models.User;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
 
@@ -23,6 +24,7 @@ import static java.util.concurrent.CompletableFuture.supplyAsync;
  */
 public abstract class BaseModelHelper<T extends BaseModel, K> {
 
+    private String primaryKeyCol ;
     protected final JPAApi jpaApi;
     protected final DatabaseExecutionContext dbExecutionContext;
     protected Class<T> tClass ;
@@ -59,7 +61,9 @@ public abstract class BaseModelHelper<T extends BaseModel, K> {
        CriteriaQuery<T> criteria = builder.createQuery(tClass);
        Root<T> root = criteria.from( tClass );
        criteria.select( root );
-       criteria.where( builder.equal( root.get( "softDeleted" ), false ) );
+       criteria.where(builder.and(
+               builder.equal(root.get(getPrimaryKeyCol()), primaryKey),
+               builder.equal( root.get( "softDeleted" ), false ))) ;
 
        List<T> results = jpaApi.em().createQuery( criteria ).getResultList() ;
 
@@ -85,5 +89,13 @@ public abstract class BaseModelHelper<T extends BaseModel, K> {
 
     protected <T> T wrapInTransaction(Function<EntityManager, T> function) {
         return jpaApi.withTransaction(function);
+    }
+
+    public String getPrimaryKeyCol() {
+        if(primaryKeyCol == null) {
+            String clazz = tClass.getSimpleName() ;
+            primaryKeyCol = Character.toLowerCase(clazz.charAt(0)) + clazz.substring(1) + "Id" ;
+        }
+        return primaryKeyCol ;
     }
 }

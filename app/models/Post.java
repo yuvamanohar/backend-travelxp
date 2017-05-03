@@ -18,20 +18,17 @@ import java.util.Locale;
 
 @NamedQueries({
         @NamedQuery(
-                name = "post_get_by_id",
-                query = "select p from Post p where p.postId = :postId and softDeleted = :softDeleted"),
-        @NamedQuery(
                 name = "get_older_posts",
-                query = "select p from Post p where p.updatedAt < :referenceTime and softDeleted = :softDeleted order by p.updatedAt desc, p.postId desc"),
+                query = "select p from Post p where p.updatedAt < :referenceTime and softDeleted = false order by p.updatedAt desc, p.postId desc"),
         @NamedQuery(
                 name = "get_newer_posts",
-                query = "select p from Post p where p.updatedAt >= :mostRecentPostTime and softDeleted = :softDeleted order by p.updatedAt desc, p.postId desc"),
+                query = "select p from Post p where p.updatedAt >= :mostRecentPostTime and softDeleted = false order by p.updatedAt desc, p.postId desc"),
         @NamedQuery(
                 name = "get_posts_in_last_x_days",
-                query = "select p from Post p where p.createdAt >= :time and softDeleted = :softDeleted order by p.updatedAt desc, p.postId desc"),
+                query = "select p from Post p where p.createdAt >= :time and softDeleted = false order by p.updatedAt desc, p.postId desc"),
         @NamedQuery(
                 name = "get_orphaned_posts_by_user",
-                query = "select p from Post p where p.user = :userId and p.album = NULL and softDeleted = false order by p.updatedAt desc, p.postId desc")
+                query = "select p from Post p where p.user = :user and p.album = NULL and softDeleted = false order by p.updatedAt desc, p.postId desc")
 })
 
 @Entity

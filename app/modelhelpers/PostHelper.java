@@ -3,6 +3,7 @@ package modelhelpers;
 import com.google.inject.Inject;
 import javafx.geometry.Pos;
 import models.Post;
+import models.User;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
 import utils.DateFormatter;
@@ -50,7 +51,7 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
     public List<Post> getPostsOlderThan(String referenceTime, int offset, int count) {
         TypedQuery<Post> morePosts = jpaApi.em().createNamedQuery("get_older_posts", Post.class)
                                                 .setParameter("referenceTime", referenceTime)
-                                                .setParameter("softDeleted", false).setFirstResult(offset)
+                                                .setFirstResult(offset)
                                                 .setMaxResults(count) ;
         return morePosts.getResultList() ;
     }
@@ -68,8 +69,7 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
      */
     public List<Post> getPostsNewerThan(String mostRecentPostTime, int count) {
         TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("get_newer_posts", Post.class)
-                .setParameter("mostRecentPostTime", mostRecentPostTime)
-                .setParameter("softDeleted", false) ;
+                .setParameter("mostRecentPostTime", mostRecentPostTime) ;
 
         return typedQuery.getResultList() ;
     }
@@ -82,8 +82,7 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
     public List<Post> getPostsInLastXDays(int x) {
         String time = DateFormatter.getTimeBeforeXdays(x) ;
         TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("get_posts_in_last_x_days", Post.class)
-                .setParameter("time", time)
-                .setParameter("softDeleted", false) ;
+                .setParameter("time", time) ;
 
         return typedQuery.getResultList() ;
 
@@ -94,14 +93,14 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
         return supplyAsync(() -> wrapInTransaction(em -> getPostsInLastXDays(x)), dbExecutionContext);
     }
 
-    public List<Post> getAllOrphanedPosts(Long userId) {
+    public List<Post> getAllOrphanedPosts(User user) {
         TypedQuery<Post> typedQuery = jpaApi.em().createNamedQuery("get_orphaned_posts_by_user", Post.class)
-                                            .setParameter("userId", userId) ;
+                                            .setParameter("user", user) ;
         return typedQuery.getResultList() ;
     }
 
     @Override
-    public CompletionStage<List<Post>> getAllOrphanedPostsAsync(Long userId) {
-        return supplyAsync(() -> wrapInTransaction(em -> getAllOrphanedPosts(userId)), dbExecutionContext) ;
+    public CompletionStage<List<Post>> getAllOrphanedPostsAsync(User user) {
+        return supplyAsync(() -> wrapInTransaction(em -> getAllOrphanedPosts(user)), dbExecutionContext) ;
     }
 }

@@ -2,6 +2,7 @@ package modelhelpers;
 
 import com.google.inject.Inject;
 import models.Album;
+import models.User;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
 
@@ -21,16 +22,15 @@ public class AlbumHelper extends BaseModelHelper<Album, Long> implements IAlbum 
         super(jpaApi, dbExecutionContext, Album.class);
     }
 
-    public List<Album> getAll(Long userId) {
+    public List<Album> getAll(User user) {
         TypedQuery<Album> typedQuery = jpaApi.em().createNamedQuery("get_albums_by_user", Album.class)
-                .setParameter("userId", userId)
-                .setParameter("softDeleted", false) ;
+                .setParameter("user", user) ;
 
         return typedQuery.getResultList() ;
     }
 
     @Override
-    public CompletionStage<List<Album>> getAllAsync(Long userId) {
-        return supplyAsync(() -> wrapInTransaction(em -> getAll(userId)), dbExecutionContext) ;
+    public CompletionStage<List<Album>> getAllAsync(User user) {
+        return supplyAsync(() -> wrapInTransaction(em -> getAll(user)), dbExecutionContext) ;
     }
 }

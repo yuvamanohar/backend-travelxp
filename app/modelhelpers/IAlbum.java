@@ -2,6 +2,7 @@ package modelhelpers;
 
 import com.google.inject.ImplementedBy;
 import models.Album;
+import models.User;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -14,5 +15,5 @@ public interface IAlbum {
     public CompletionStage<Album> insertAsync(Album album) ;
     public CompletionStage<Album> mergeAsync(Album album) ;
 
-    public CompletionStage<List<Album>> getAllAsync(Long userId) ;
+    public CompletionStage<List<Album>> getAllAsync(User user) ;
 }

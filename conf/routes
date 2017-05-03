@@ -26,3 +26,7 @@ GET    /v1/user/:userId/getUpdatedFeed                         controllers.FeedC
 
 #ProfileController
 GET    /v1/user/:userId/getProfileInfo                          controllers.ProfileController.getProfileInfo(userId: Long)
+GET    /v1/searchUsers/:name                                    controllers.ProfileController.searchUsers(name: String)
+
+#FanRelationController
+POST    /v1/addFanRelation                                      controllers.FanRelationController.addFanRelation()

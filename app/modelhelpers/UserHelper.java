@@ -2,11 +2,14 @@ package modelhelpers;
 
 import com.google.inject.Inject;
 import models.User;
+import org.hibernate.exception.ConstraintViolationException;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
+import utils.StringUtils;
 
-import javax.persistence.NoResultException;
+import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
@@ -46,12 +49,35 @@ public class UserHelper extends BaseModelHelper<User, Long> implements IUser {
 
     @Override
     public User addUserAndSocialProfile(User user) {
-        this.insert(user) ;
-        return user ;
+        try {
+            return this.insert(user) ;
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+
+            if(e.getCause() instanceof ConstraintViolationException) {
+                user.setUserName(StringUtils.generateRandomUserName(user.userNameSeed));
+                // TODO, IMPORTANT NOTE :- Once a transaction fails, wrap the new method in a new transaction
+                return wrapInTransaction(entityManager -> addUserAndSocialProfile(user)) ;
+            } else{
+                throw e ;
+            }
+        }
+
     }
 
     @Override
     public CompletionStage<User> addUserAndSocialProfileAsync(User user) {
-        return supplyAsync(() -> wrapInTransaction(entityManager -> addUserAndSocialProfile(user)), dbExecutionContext);
+        return supplyAsync(() -> wrapInTransaction(entityManager -> addUserAndSocialProfile(user)), dbExecutionContext) ;
+    }
+
+    public List<User> getSearchUsers(String name) {
+        TypedQuery<User> typedQuery = jpaApi.em().createNamedQuery("user_search_like_name", User.class)
+                                            .setParameter("name", name + "%");
+        return typedQuery.getResultList() ;
+    }
+
+    @Override
+    public CompletionStage<List<User>> getSearchUsersAsync(String name) {
+        return supplyAsync(() -> wrapInTransaction(em -> getSearchUsers(name))) ;
     }
 }

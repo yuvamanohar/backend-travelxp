@@ -15,7 +15,7 @@ import java.util.List;
 @NamedQueries({
         @NamedQuery(
                 name = "get_albums_by_user",
-                query = "select a from Album a where a.user = :userId and a.softDeleted = :softDeleted")
+                query = "select a from Album a where a.user = :user and a.softDeleted = false")
 })
 
 @Entity

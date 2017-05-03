@@ -9,4 +9,5 @@ public class Config {
     public static final Integer ALBUM_TIME_SPAN_THRESHOLD = 10 ; // It is assumed a user will not be at the same place for more than 10 days
 
     public static final Integer ALBUM_DISTANCE_SPAN_THRESHOLD = 75 ;  // In Kms
+    public static final Integer THUMBNAIL_SIZE = 225 ;
 }

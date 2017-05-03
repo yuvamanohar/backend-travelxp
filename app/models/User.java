@@ -1,11 +1,11 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.hibernate.annotations.NaturalId;
+import utils.StringUtils;
 
 import javax.persistence.*;
-import java.sql.Date;
 import java.util.Objects;
 
 /**
@@ -13,11 +13,11 @@ import java.util.Objects;
  */
 @NamedQueries({
         @NamedQuery(
-                name = "user_get_by_id",
-                query = "select u from User u where u.userId = :userId and softDeleted = :softDeleted"),
-        @NamedQuery(
                 name = "user_update_platform_and_device_id",
-                query = "update User u set u.platform = :platform, u.deviceId = :deviceId  where u.userId = :userId")
+                query = "update User u set u.platform = :platform, u.deviceId = :deviceId  where u.userId = :userId"),
+        @NamedQuery(
+                name = "user_search_like_name",
+                query = "select u from User u where u.userName like :name and softDeleted = false")
 })
 @Entity
 @Table(name="users")
@@ -31,16 +31,25 @@ public class User extends BaseModel {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private SocialProfile socialProfile ;
 
+    @Column(unique = true)
+    private String userName ;
+
+    public String aboutMe ;
     public Long mobile ;
     public String email ;
     public String platform  ;
     public String deviceId ;
 
+    @Transient
+    public String userNameSeed;
+
     public User() {} ;
 
-    public User(Long mobile, String email, String platform,
+    public User(Long mobile, String userNameSeed, String email, String platform,
                 String deviceId, Boolean softDeleted) {
         this.mobile = mobile ;
+        this.userName = StringUtils.generateUserName(userNameSeed) ;
+        this.userNameSeed = userNameSeed ;
         this.email = email ;
         this.platform = platform ;
         this.deviceId = deviceId ;
@@ -79,5 +88,20 @@ public class User extends BaseModel {
     @Override
     public int hashCode() {
         return Objects.hash(userId, socialProfile.socialProfileId);
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public User copy() {
+        User newUser = new User(this.mobile, this.userNameSeed, this.email, this.platform,
+                                this.deviceId, this.softDeleted) ;
+        newUser.addSocialProfile(this.socialProfile.copy());
+        return newUser ;
     }
 }

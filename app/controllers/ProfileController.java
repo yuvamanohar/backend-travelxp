@@ -27,7 +27,11 @@ public class ProfileController extends BaseController {
     }
 
     public CompletionStage<Result> getProfileInfo(Long userId) {
-        return iUser.getAsync(userId).thenComposeAsync(u -> iAlbum.getAllAsync(userId).thenComposeAsync(a ->
-                iPost.getAllOrphanedPostsAsync(userId).thenApplyAsync(p -> ok(Json.toJson(new ProfileData(u, a, p)))))) ;
+        return iUser.getAsync(userId).thenComposeAsync(u -> iAlbum.getAllAsync(u).thenComposeAsync(a ->
+                iPost.getAllOrphanedPostsAsync(u).thenApplyAsync(p -> ok(Json.toJson(new ProfileData(u, a, p)))))) ;
+    }
+
+    public CompletionStage<Result> searchUsers(String name) {
+        return iUser.getSearchUsersAsync(name).thenApplyAsync(ul -> ok(Json.toJson(ul))) ;
     }
 }
