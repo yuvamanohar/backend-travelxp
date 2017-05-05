@@ -1,9 +1,8 @@
-package modelhelpers;
+package models.interfaces;
 
 import com.google.inject.ImplementedBy;
-import modelhelpers.SocialProfileHelper;
+import models.helpers.SocialProfileHelper;
 import models.SocialProfile;
-import models.User;
 
 import java.util.concurrent.CompletionStage;
 
@@ -12,6 +11,5 @@ import java.util.concurrent.CompletionStage;
  */
 @ImplementedBy(SocialProfileHelper.class)
 public interface ISocialProfile extends IBaseModel {
-    public SocialProfile getByNetworkAndNetworkId(String socialNetwork, String socialNetworkId) ;
     public CompletionStage<SocialProfile> getByNetworkAndNetworkIdAsync(String socialNetwork, String socialNetworkId) ;
 }

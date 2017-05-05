@@ -1,8 +1,8 @@
 package controllers;
 
-import modelhelpers.IAlbum;
-import modelhelpers.IPost;
-import modelhelpers.IUser;
+import models.interfaces.IAlbum;
+import models.interfaces.IPost;
+import models.interfaces.IUser;
 import play.libs.Json;
 import play.mvc.Result;
 import results.ProfileData;

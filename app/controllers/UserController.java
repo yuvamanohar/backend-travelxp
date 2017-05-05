@@ -1,8 +1,7 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import modelhelpers.ISocialProfile;
-import modelhelpers.IUser;
+import models.interfaces.ISocialProfile;
+import models.interfaces.IUser;
 import models.*;
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -13,7 +12,6 @@ import utils.DateFormatter;
 import views.html.index;
 
 import javax.inject.Inject;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
@@ -93,8 +91,8 @@ public class UserController extends BaseController {
     }
 
     @Transactional
-    public Result getUser(Long userId) {
-        return  ok(Json.toJson(iUser.get(userId))) ;
+    public CompletionStage<Result> getUser(Long userId) {
+        return  iUser.getAsync(userId).thenApplyAsync(u -> ok(Json.toJson(u))) ;
     }
 
 }

@@ -1,7 +1,7 @@
-package modelhelpers;
+package models.helpers;
 
 import com.google.inject.Inject;
-import models.Album;
+import models.interfaces.IFanRelation;
 import models.FanRelation;
 import models.User;
 import play.db.jpa.JPAApi;
@@ -31,7 +31,7 @@ public class FanRelationHelper extends BaseModelHelper<FanRelation, Long> implem
 
     @Override
     public CompletionStage<List<FanRelation>> getFansAsync(User user) {
-        return supplyAsync(() -> wrapInTransaction(em -> getFans(user))) ;
+        return supplyAsync(() -> wrapInTransaction(em -> getFans(user)), dbExecutionContext) ;
     }
 
     public List<FanRelation> getInfluencers(User user) {
@@ -43,7 +43,7 @@ public class FanRelationHelper extends BaseModelHelper<FanRelation, Long> implem
 
     @Override
     public CompletionStage<List<FanRelation>> getInfluencersAsync(User user) {
-        return supplyAsync(() -> wrapInTransaction(em -> getInfluencers(user))) ;
+        return supplyAsync(() -> wrapInTransaction(em -> getInfluencers(user)), dbExecutionContext) ;
     }
 
 }

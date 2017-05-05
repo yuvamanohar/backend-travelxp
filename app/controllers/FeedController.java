@@ -1,7 +1,7 @@
 package controllers;
 
-import modelhelpers.IPost;
-import modelhelpers.IUser;
+import models.interfaces.IPost;
+import models.interfaces.IUser;
 import models.PartialFeed;
 import models.PartialFeed.FeedType;
 import play.db.jpa.Transactional;

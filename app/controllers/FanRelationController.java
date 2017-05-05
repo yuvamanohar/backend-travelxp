@@ -1,9 +1,7 @@
 package controllers;
 
-import modelhelpers.IAlbum;
-import modelhelpers.IFanRelation;
-import modelhelpers.IPost;
-import modelhelpers.IUser;
+import models.interfaces.IFanRelation;
+import models.interfaces.IUser;
 import models.FanRelation;
 import models.User;
 import play.libs.Json;

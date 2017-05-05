@@ -12,21 +12,28 @@ GET     /message                    controllers.AsyncController.message
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
+# External Assets
+GET     /travelxp-cdn/*file                                    controllers.ExternalAssets.at(path="/home/yuva/travelxp-cdn", file: String)
+
 # User controller actions
 POST    /v1/bootstrap                                          controllers.UserController.bootstrap()
-POST    /v1/deleteUser/:userId                                 controllers.UserController.deleteUser(userId: Long)
-GET     /v1/getUser/:userId                                    controllers.UserController.getUser(userId: Long)
+POST    /v1/deleteUser/user/:userId                                 controllers.UserController.deleteUser(userId: Long)
+GET     /v1/getUser/user/:userId                                    controllers.UserController.getUser(userId: Long)
 
 #PostController
-PUT    /v1/user/:userId/postContent                            controllers.PostController.postContent(userId: Long)
+PUT    /v1/postContent/user/:userId                            controllers.PostController.postContent(userId: Long)
+GET    /v1/getPost/post/:postId                                 controllers.PostController.getPost(postId: Long)
 
 #FeedController
-GET    /v1/user/:userId/getOlderFeed                           controllers.FeedController.getOlderFeed(userId: Long)
-GET    /v1/user/:userId/getUpdatedFeed                         controllers.FeedController.getUpdatedFeed(userId: Long)
+GET    /v1/getOlderFeed/user/:userId                                controllers.FeedController.getOlderFeed(userId: Long)
+GET    /v1/getUpdatedFeed/user/:userId                              controllers.FeedController.getUpdatedFeed(userId: Long)
 
 #ProfileController
-GET    /v1/user/:userId/getProfileInfo                          controllers.ProfileController.getProfileInfo(userId: Long)
-GET    /v1/searchUsers/:name                                    controllers.ProfileController.searchUsers(name: String)
+GET    /v1/getProfileInfo/user/:userId                              controllers.ProfileController.getProfileInfo(userId: Long)
+GET    /v1/searchUsers/name/:name                                   controllers.ProfileController.searchUsers(name: String)
 
 #FanRelationController
-POST    /v1/addFanRelation                                      controllers.FanRelationController.addFanRelation()
+POST    /v1/addFanRelation                                     controllers.FanRelationController.addFanRelation()
+
+#AlbumController
+GET   /v1/getPosts/album/:albumId                                controllers.AlbumController.getPosts(albumId: Long)

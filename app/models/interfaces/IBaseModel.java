@@ -1,4 +1,4 @@
-package modelhelpers;
+package models.interfaces;
 
 import java.util.concurrent.CompletionStage;
 

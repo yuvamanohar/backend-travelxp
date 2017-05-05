@@ -1,9 +1,9 @@
-package modelhelpers;
+package models.interfaces;
 
 import com.google.inject.ImplementedBy;
 import models.Post;
-import models.PostDetail;
 import models.User;
+import models.helpers.PostHelper;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -13,8 +13,9 @@ import java.util.concurrent.CompletionStage;
  */
 @ImplementedBy(PostHelper.class)
 public interface IPost {
-    public Post insertPostAndPostDetails(Post post) ;
     public CompletionStage<Post> insertPostAndPostDetailsAsync(Post post) ;
+
+    public CompletionStage<Post> getAsync(Long postId) ;
 
     public CompletionStage<List<Post>> getPostsOlderThanAsync(String referenceTime, int offset, int count) ;
     public CompletionStage<List<Post>> getPostsNewerThanAsync(String mostRecentPostTime, int count) ;

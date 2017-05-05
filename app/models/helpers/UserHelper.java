@@ -1,6 +1,7 @@
-package modelhelpers;
+package models.helpers;
 
 import com.google.inject.Inject;
+import models.interfaces.IUser;
 import models.User;
 import org.hibernate.exception.ConstraintViolationException;
 import play.db.jpa.JPAApi;
@@ -36,7 +37,6 @@ public class UserHelper extends BaseModelHelper<User, Long> implements IUser {
 //        }
 //    }
 
-    @Override
     public User updatePlatformandDeviceId(Long userId, String platform, String deviceId) {
         TypedQuery<User> typedQuery = jpaApi.em().createNamedQuery("user_update_platform_and_device_id", User.class) ;
         return typedQuery.getSingleResult() ;
@@ -47,7 +47,6 @@ public class UserHelper extends BaseModelHelper<User, Long> implements IUser {
         return supplyAsync(() -> wrapInTransaction(em -> updatePlatformandDeviceId(userId, platform, deviceId)), dbExecutionContext) ;
     }
 
-    @Override
     public User addUserAndSocialProfile(User user) {
         try {
             return this.insert(user) ;
@@ -78,6 +77,6 @@ public class UserHelper extends BaseModelHelper<User, Long> implements IUser {
 
     @Override
     public CompletionStage<List<User>> getSearchUsersAsync(String name) {
-        return supplyAsync(() -> wrapInTransaction(em -> getSearchUsers(name))) ;
+        return supplyAsync(() -> wrapInTransaction(em -> getSearchUsers(name)), dbExecutionContext) ;
     }
 }

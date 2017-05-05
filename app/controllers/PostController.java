@@ -2,20 +2,17 @@ package controllers;
 
 import cdn.CdnRequest;
 import cdn.ICdn;
-import javafx.geometry.Pos;
-import modelhelpers.IAlbum;
-import modelhelpers.IPost;
-import modelhelpers.IUser;
+import models.interfaces.IAlbum;
+import models.interfaces.IPost;
+import models.interfaces.IUser;
 import models.Album;
 import models.Post;
 import models.PostDetail;
 import play.db.jpa.Transactional;
 import play.libs.Json;
-import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Http;
 import play.mvc.Result;
 import utils.Config;
-import utils.GeoUtils;
 import utils.Location;
 
 import javax.inject.Inject;
@@ -23,7 +20,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executor;
 
 /**
  * Created by yuva on 20/4/17.
@@ -127,5 +123,10 @@ public class PostController extends BaseController {
                 return new Album().addPost(newPost);
             }
         }) ;
+    }
+
+    @Transactional
+    public CompletionStage<Result> getPost(Long postId) {
+        return iPost.getAsync(postId).thenApplyAsync(p -> ok(Json.toJson(p))) ;
     }
 }

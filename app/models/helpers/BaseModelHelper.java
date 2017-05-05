@@ -1,4 +1,4 @@
-package modelhelpers;
+package models.helpers;
 
 import models.BaseModel;
 import models.User;

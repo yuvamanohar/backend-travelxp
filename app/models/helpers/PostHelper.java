@@ -1,14 +1,13 @@
-package modelhelpers;
+package models.helpers;
 
 import com.google.inject.Inject;
-import javafx.geometry.Pos;
+import models.interfaces.IPost;
 import models.Post;
 import models.User;
 import play.db.jpa.JPAApi;
 import services.DatabaseExecutionContext;
 import utils.DateFormatter;
 
-import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -36,10 +35,8 @@ public class PostHelper extends BaseModelHelper<Post, Long> implements IPost {
 //        }
 //    }
 
-    @Override
     public Post insertPostAndPostDetails(Post post) {
         post = this.insert(post) ;
-//        post.postDetails.forEach(i -> jpaApi.em().persist(i));
         return post ;
     }
 

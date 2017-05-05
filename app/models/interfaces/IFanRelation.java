@@ -1,8 +1,9 @@
-package modelhelpers;
+package models.interfaces;
 
 import com.google.inject.ImplementedBy;
 import models.FanRelation;
 import models.User;
+import models.helpers.FanRelationHelper;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
